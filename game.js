@@ -19,7 +19,7 @@ let dy = -5; //"Default" vertijalna brzina loptice
 
 //Svojstva za cigle
 let brickRowCount = 5; //"Default" broj redova cigli
-let brickColumnCount = 5; //"Default" broj stupaca cigli
+let brickColumnCount = 10; //"Default" broj stupaca cigli
 let brickWidth = (canvas.width - (brickColumnCount + 1) * 10) / brickColumnCount; // Postavljanje širine cigle 
 const brickHeight = 20;
 const brickPadding = 10;
