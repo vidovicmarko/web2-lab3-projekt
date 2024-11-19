@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, start-scale=1.0">
+    <title>Breakout</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="gameBreakout"></canvas>
+    <img id="brickImage" src="images/brick.png" style="display: none;">
+
+    <!-- Početni prozor za postavke -->
+    <div id="startScreen" class="overlay" style="display: flex;">
+        <div class="modal">
+            <h1>Game Settings</h1>
+            <div>
+                <label for="startSpeedSlider">Ball Speed: <span id="startSpeedValue">5</span></label>
+                <input type="range" id="startSpeedSlider" min="5" max="15" value="5" step="1">
+            </div>
+            <div>
+                <label for="startRowSlider">Rows: <span id="startRowValue">5</span></label>
+                <input type="range" id="startRowSlider" min="5" max="20" value="5" step="1">
+            </div>
+            <div>
+                <label for="startColSlider">Columns: <span id="startColValue">5</span></label>
+                <input type="range" id="startColSlider" min="5" max="20" value="5" step="1">
+            </div>
+            <button id="startButton">Start Game</button>
+        </div>
+    </div>
+    <!-- Prozor za postavke kada je gotova igra-->
+    <div id="gameOverScreen" class="overlay">
+        <div class="modal">
+            <h1 id="gameMessage">GAME OVER</h1>
+            <p id="scoreDisplay">Your Score: 0</p>
+            <p id="highScoreDisplay">High Score: 0</p>
+            <div>
+                <label for="speedSlider">Ball Speed: <span id="speedValue">5</span></label>
+                <input type="range" id="speedSlider" min="5" max="15" value="5" step="1">
+            </div>
+            <div>
+                <label for="rowSlider">Rows: <span id="rowValue">5</span></label>
+                <input type="range" id="rowSlider" min="5" max="20" value="5" step="1">
+            </div>
+            <div>
+                <label for="colSlider">Columns: <span id="colValue">5</span></label>
+                <input type="range" id="colSlider" min="5" max="20" value="5" step="1">
+            </div>
+            <button id="restartButton">Play Again</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
