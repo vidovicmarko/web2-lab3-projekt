@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Metapodatak koji označava da je dokument u HTML5 standardu -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, start-scale=1.0">
@@ -8,7 +9,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Canvas element za crtanje igre pomoću JavaScript-a -->
     <canvas id="gameBreakout"></canvas>
+    <!-- Slika cigle koja se koristi u igri -->
     <img id="brickImage" src="images/brick.png" style="display: none;">
 
     <!-- Početni prozor za postavke -->
@@ -16,17 +19,21 @@
         <div class="modal">
             <h1>Game Settings</h1>
             <div>
-                <label for="startSpeedSlider">Ball Speed: <span id="startSpeedValue">5</span></label>
-                <input type="range" id="startSpeedSlider" min="5" max="15" value="5" step="1">
+                <!-- Klizač za postavljanje početne brzine loptice -->
+                <label for="startSpeedSlider">Ball Speed: <span id="startSpeedValue">8</span></label>
+                <input type="range" id="startSpeedSlider" min="8" max="12" value="8" step="1">
             </div>
             <div>
+                <!-- Klizač za postavljanje početnog broja redova cigli -->
                 <label for="startRowSlider">Rows: <span id="startRowValue">5</span></label>
                 <input type="range" id="startRowSlider" min="5" max="10" value="5" step="1">
             </div>
             <div>
+                <!-- Klizač za postavljanje početnog broja stupaca cigli -->
                 <label for="startColSlider">Columns: <span id="startColValue">10</span></label>
                 <input type="range" id="startColSlider" min="10" max="25" value="10" step="1">
             </div>
+            <!-- Gumb za početak igre -->
             <button id="startButton">Start Game</button>
         </div>
     </div>
@@ -34,24 +41,28 @@
     <div id="gameOverScreen" class="overlay">
         <div class="modal">
             <h1 id="gameMessage">GAME OVER</h1>
-            <p id="scoreDisplay">Your Score: 0</p>
-            <p id="highScoreDisplay">High Score: 0</p>
+            <p id="scoreDisplay">Your Score: 0</p><!-- Prikazuje trenutni rezultat igrača -->
+            <p id="highScoreDisplay">High Score: 0</p><!-- Prikazuje najviši rezultat pohranjen lokalno -->
             <div>
-                <label for="speedSlider">Ball Speed: <span id="speedValue">5</span></label>
-                <input type="range" id="speedSlider" min="5" max="15" value="5" step="1">
+                <!-- Klizač za ponovno postavljanje brzine loptice za novu igru -->
+                <label for="speedSlider">Ball Speed: <span id="speedValue">8</span></label>
+                <input type="range" id="speedSlider" min="8" max="12" value="8" step="1">
             </div>
             <div>
+                <!-- Klizač za ponovno postavljanje broja redova cigli za novu igru -->
                 <label for="rowSlider">Rows: <span id="rowValue">5</span></label>
                 <input type="range" id="rowSlider" min="5" max="10" value="5" step="1">
             </div>
             <div>
+                <!-- Klizač za ponovno postavljanje broja stupaca cigli za novu igru -->
                 <label for="colSlider">Columns: <span id="colValue">10</span></label>
                 <input type="range" id="colSlider" min="10" max="25" value="10" step="1">
             </div>
+            <!-- Gumb za ponovno pokretanje igre -->
             <button id="restartButton">Play Again</button>
         </div>
     </div>
-
+    <!-- Povezivanje vanjske JavaScript datoteke -->
     <script src="game.js"></script>
 </body>
 </html>

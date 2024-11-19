@@ -1,21 +1,21 @@
 //Postavljanje canvas-a
 const canvas = document.getElementById('gameBreakout');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth - 8;
-canvas.height = window.innerHeight - 8;
+canvas.width = window.innerWidth - 8; // Postavljenje širine, -8px kako bih mogao prikazati obrub
+canvas.height = window.innerHeight - 8; // Postavljanje visine. -8px kako bih mogao prikazati obrub
 
-//Svojstva za palicu (paddle) o koju se odbija loptica 
-const paddleHeight = 10;
-const paddleWidth = 200;
-let paddleX = (canvas.width - paddleWidth) / 2;
+//Svojstva za palicu (platform) o koju se odbija loptica 
+const platformHeight = 10;
+const platformWidth = 200;
+let platformX = (canvas.width - platformWidth) / 2;
 
 // Svojstva loptice
 let ballRadius = 10;
 //Postavljanje početne lokacije loptice iznad same palice 
 let x = canvas.width / 2;
 let y = canvas.height - 20;
-let dx = 5; //"Default" horizontalna brzina loptice
-let dy = -5; //"Default" vertijalna brzina loptice
+let dx = 8; //"Default" horizontalna brzina loptice
+let dy = -8; //"Default" vertijalna brzina loptice
 
 //Svojstva za cigle
 let brickRowCount = 5; //"Default" broj redova cigli
@@ -74,29 +74,30 @@ colSlider.oninput = () => {
 
 let gameRunning = false; // Oznaka koja govori jel igra u tijeku
 
+
+/**
+ * Funkcija startButton.addEventListener('click', () =>
+ * Ova funkcija se poziva kada korisnik pritisne gumb za pokretanje igre, cilj je da se odaberu postavke, sakrije početni ekran i započne igra
+ */
+
 startButton.addEventListener('click', () => {
     let startSpeed = parseInt(startSpeedSlider.value);  //Dohvaća početnu brzinu s klizača i pretvara je u cijeli broj
 
-    // Generiranje kuta između 30 i 60 ili između -30 i -60 stupnjeva
+    // Generiranje kuta između 30 i 60 ili između -30 i -60 stupnjeva kako bi se loptica odbila pod nasumičnim kutem
     let angle;
     if (Math.random() < 0.5) {
         angle = (Math.random() * 30 + 30) * (Math.PI / 180); // Kut između 30 i 60 stupnjeva
     } else {
         angle = -(Math.random() * 30 + 30) * (Math.PI / 180);// Kut između -30 i -60 stupnjeva
     }
-    console.log('Generated angle (deg):', angle * (180 / Math.PI));
 
     //Postavlja početne horizontalne i vertikalne brzine i smjer loptice s nasumičnim kutom
-    dx = Math.cos(angle) * startSpeed; //Horizontalna brzina loptice
-    dy = -Math.abs(Math.sin(angle) * startSpeed); //Vertikalna brzina loptice
+    dx = Math.cos(angle) * startSpeed; //Horizontalna brzina loptice na temelju kuta i početne brzine
+    dy = -Math.abs(Math.sin(angle) * startSpeed); //Vertikalna brzina loptice na temelju kuta i početne brzine
 
     //Dohvaća trenutni broj redova i stupaca cigli s klizača
     brickRowCount = parseInt(startRowSlider.value);
     brickColumnCount = parseInt(startColSlider.value);
-
-    if (Math.random() < 0.5) {
-        dx = -dx;
-    }
 
     startScreen.style.display = 'none'; //Sakriva početni ekran s postavkama igre
     resetBricks(); //Inicijalizira cigle sa novim postavkama
@@ -108,14 +109,15 @@ let brickOffsetLeft = 0; //Udaljenost od lijevog ruba
 
 /**
  * Funkcija resetBricks
- * Resetira i ponovno inicijalizira cigle na temelju trenutnih postavki broja redova i stupaca.
+ * Resetira i ponovno inicijalizira cigle na temelju trenutnih postavki broja redova i stupaca
  */
 
 let bricks = [];
 function resetBricks() {
     bricks = [];
-    // Širina cigle se izračunava na temelju širine canvasa, broja stupaca i razmaka između cigli
-    brickWidth = (canvas.width - (brickColumnCount - 1) * brickPadding) / brickColumnCount;
+    // brickWidth - računa širinu svake cigle na temelju širine canvas elementa, broja stupaca cigli i razmaka između cigli
+    brickWidth = (canvas.width - (brickColumnCount - 1) * brickPadding) / brickColumnCount; 
+    // brickOffsetLeft -  Računa "offset" kako bi se cigle centrirale unutar canvas-a
     brickOffsetLeft = (canvas.width - (brickColumnCount * brickWidth + (brickColumnCount - 1) * brickPadding)) / 2;
     
     if (brickOffsetLeft < 0) brickOffsetLeft = 0; //Provjera da cigle nisu izvan ruba canvas-a
@@ -138,7 +140,7 @@ document.addEventListener('keyup', keyUpHandler, false);
 
 /**
  * Funkcije keyDownHandler i keyUpHandler
- * Postavlja zastavicu "rightPressed" ili "leftPressed" na "true"/"false" ovisno o pritisnutoj/otpuštenoj tipki.
+ * Postavlja zastavicu "rightPressed" ili "leftPressed" na "true"/"false" ovisno o pritisnutoj/otpuštenoj tipki
  */
 
 function keyDownHandler(e) {
@@ -169,12 +171,12 @@ function drawBall() {
 }
 
 /**
- * Funkcija drawPaddle
- * Crta palicu na platnu na trenutnoj poziciji "paddleX".
+ * Funkcija drawPlatform
+ * Crta palicu na platnu na trenutnoj poziciji "platformX".
  */
-function drawPaddle() {
+function drawPlatform() {
     ctx.beginPath();
-    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight); // Pravokutnik
+    ctx.rect(platformX, canvas.height - platformHeight, platformWidth, platformHeight); // Pravokutnik
     ctx.shadowBlur = 20; //Sjena
     ctx.shadowColor = '#000';
     ctx.fillStyle = '#7a1111';
@@ -187,16 +189,18 @@ function drawPaddle() {
  * Crta cigle na platnu na temelju trenutnih pozicija u "bricks" nizu.
  */
 function drawBricks() {
-    for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
-            if (bricks[c][r].status == 1) {
-                let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-                let brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-                bricks[c][r].x = brickX;
-                bricks[c][r].y = brickY;
+    for (let i = 0; i < brickColumnCount; i++) {
+        for (let j = 0; j < brickRowCount; j++) {
+            if (bricks[i][j].status == 1) { // Provjerava je li cigla postoji (status 1)
+                // Izračunava x i y poziciju za ciglu
+                let brickX = i * (brickWidth + brickPadding) + brickOffsetLeft;
+                let brickY = j * (brickHeight + brickPadding) + brickOffsetTop;
+                //Postavlja izračunate x i y koordinate za svaku ciglu u nizu bricks
+                bricks[i][j].x = brickX;
+                bricks[i][j].y = brickY;
                 ctx.shadowBlur = 20; //Sjena
                 ctx.shadowColor = '#000'; 
-                ctx.drawImage(brickImage, brickX, brickY, brickWidth, brickHeight); //Uzima sliku za ciglu
+                ctx.drawImage(brickImage, brickX, brickY, brickWidth, brickHeight);//Crta ciglu koristeći sliku
             }
         }
     }
@@ -204,7 +208,7 @@ function drawBricks() {
 
 /**
  * Funkcija collisionDetection
- * Provjerava sudare između loptice i cigli te prilagođava smjer loptice i status cigli.
+ * Provjerava sudare između loptice i cigli te prilagođava smjer loptice i status cigli
  */
 function collisionDetection() {
     //Petlja koja provjerava status svake cigle
@@ -213,11 +217,19 @@ function collisionDetection() {
             let b = bricks[i][j];
 
             if (b.status == 1) { //Ako cigla postoji
-                if ( //Provjerava je li loptica unutar granice cigle ako je onda se detektira sudar
-                    x + ballRadius > b.x &&
-                    x - ballRadius < b.x + brickWidth &&
-                    y + ballRadius > b.y &&
-                    y - ballRadius < b.y + brickHeight
+                if ( //Provjerava je li loptica unutar granice cigle, ako je onda se detektira sudar
+                    /**
+                    * x - trenutna kordinata središta loptice
+                    * ballRadius - polumjer loptice
+                    * x + ballRadius - desna strana loptice
+                    * b.x - lijevi rub cigle
+                    * x + ballRadius > b.x - provjerava je li desna strana loptice (x + ballRadius) prošla lijevu stranu cigle (b.x)
+                    * i tako dalje za ostale linije
+                    */
+                    x + ballRadius > b.x &&  // Desna strana loptice je unutar granice cigle
+                    x - ballRadius < b.x + brickWidth && // Lijeva strana loptice je unutar granice cigle
+                    y + ballRadius > b.y && // Donja strana loptice je unutar granice cigle
+                    y - ballRadius < b.y + brickHeight // Gornja strana loptice je unutar granice cigle
                 ) {
                     dy = -dy; // Promjena smjera vertikalne brzine loptice (odbijanje)
                     b.status = 0; //Označava da cigla više ne postoji
@@ -241,7 +253,10 @@ function collisionDetection() {
     }
 }
 
-// Funkcija za crtanje igre
+/**
+ * Funkcija draw
+ * Crta i ažurira stanje igre na canvas-u
+ */
 function draw() {
     if (!gameRunning) return; //Pauza ako igra nije aktivna
 
@@ -249,11 +264,11 @@ function draw() {
     //Poziva funkcije za crtanje cigli, loptice, palice i rezultata
     drawBricks();
     drawBall();
-    drawPaddle();
+    drawPlatform();
     drawScore();
 
     collisionDetection();//Funkcija provjere sudara
-    updatePaddlePosition();// Funkcija za ažuriranje pozicije palice
+    updatePlatformPosition();// Funkcija za ažuriranje pozicije palice
 
     // Detekcija sudara s rubovima canvas-a
     if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
@@ -263,9 +278,9 @@ function draw() {
         dy = -dy; // Promjena smjera vertikalne brzine, ako loptica udari u gornji rub
 
     } else if (y + dy > canvas.height - ballRadius) {
-        if (x > paddleX && x < paddleX + paddleWidth) {
+        if (x > platformX && x < platformX + platformWidth) {
              // Izračun pozicije udara loptice o palicu
-            let hitPosition = (x - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
+            let hitPosition = (x - (platformX + platformWidth / 2)) / (platformWidth / 2);
 
             // Postavljenje kuta odbijanja ovisno gdje se odbije
             let angle = hitPosition * Math.PI / 4; // Kut odbijanja (maksimalno 45 stupnjeva)
@@ -289,6 +304,7 @@ function draw() {
 }
 
 
+
 // Funkcija za prikaz rezultata
 function drawScore() {
     ctx.font = 'bold 16px Arial';
@@ -299,12 +315,12 @@ function drawScore() {
 }
 
 // Ažuriranje pozicije palice
-function updatePaddlePosition() {
-    if (rightPressed && paddleX < canvas.width - paddleWidth) {
-        paddleX += 12; //Pomicanje desno (brzina ovisi o vrijednosti)
+function updatePlatformPosition() {
+    if (rightPressed && platformX < canvas.width - platformWidth) {
+        platformX += 12; //Pomicanje desno (brzina ovisi o vrijednosti)
     }
-    if (leftPressed && paddleX > 0) {
-        paddleX -= 12; //Pomicanje lijevo (brzina ovisi o vrijednosti)
+    if (leftPressed && platformX > 0) {
+        platformX -= 12; //Pomicanje lijevo (brzina ovisi o vrijednosti)
     }
 }
 
@@ -335,7 +351,7 @@ function resetGame() {
     x = canvas.width / 2; //Početna x pozicija loptice
     y = canvas.height - 20;//Početna y pozicija loptice
 
-    //Generiranje kuta između 30 i 60 ili između -30 i -60 stupnjeva
+    // Generiranje kuta između 30 i 60 ili između -30 i -60 stupnjeva kako bi se loptica odbila pod nasumičnim kutem
     let angle;
     if (Math.random() < 0.5) {
         angle = (Math.random() * 30 + 30) * (Math.PI / 180); //Kut između 30 i 60 stupnjeva
@@ -347,7 +363,7 @@ function resetGame() {
     dx = Math.cos(angle) * startSpeed; // Horizontalna brzina loptice
     dy = -Math.abs(Math.sin(angle) * startSpeed); //Vertikalna brzina loptice
 
-    paddleX = (canvas.width - paddleWidth) / 2; // Resetiranje pozicije palice
+    platformX = (canvas.width - platformWidth) / 2; // Resetiranje pozicije palice
     gameRunning = true; //Pokretanje igre
     resetBricks(); // Ponovo postavljanje cigli
     draw(); 
